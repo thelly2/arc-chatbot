@@ -1,27 +1,90 @@
 const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
+const typingIndicator = document.getElementById("typing-indicator");
+const quickButtons = document.querySelectorAll(".quick-btn");
 
-function addMessage(text, sender) {
+// 🔥 IMPORTANT: Replace these with REAL ARC links
+const ARC_LINKS = {
+  website: "https://your-arc-website.com",
+  docs: "https://docs.your-arc-website.com",
+  bridge: "https://bridge.your-arc-website.com",
+  staking: "https://stake.your-arc-website.com",
+  explorer: "https://explorer.your-arc-website.com",
+  twitter: "https://x.com/yourarc",
+  discord: "https://discord.gg/yourarc",
+  telegram: "https://t.me/yourarc"
+};
+
+function addMessage(content, sender, isHTML = false) {
   const messageDiv = document.createElement("div");
   messageDiv.classList.add("message", sender);
 
+  if (sender === "bot") {
+    const avatarDiv = document.createElement("div");
+    avatarDiv.classList.add("avatar", "bot-avatar");
+    avatarDiv.textContent = "A";
+    messageDiv.appendChild(avatarDiv);
+  }
+
   const bubbleDiv = document.createElement("div");
   bubbleDiv.classList.add("bubble");
-  bubbleDiv.textContent = text;
+
+  if (isHTML) {
+    bubbleDiv.innerHTML = content;
+  } else {
+    bubbleDiv.textContent = content;
+  }
 
   messageDiv.appendChild(bubbleDiv);
   chatBox.appendChild(messageDiv);
-
   chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showTyping() {
+  typingIndicator.classList.remove("hidden");
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function hideTyping() {
+  typingIndicator.classList.add("hidden");
+}
+
+function getOfficialLinksHTML() {
+  return `
+    <p><strong>Official ARC Links</strong></p>
+    <ul>
+      <li><a href="${ARC_LINKS.website}" target="_blank">Website</a></li>
+      <li><a href="${ARC_LINKS.docs}" target="_blank">Docs</a></li>
+      <li><a href="${ARC_LINKS.bridge}" target="_blank">Bridge</a></li>
+      <li><a href="${ARC_LINKS.staking}" target="_blank">Staking</a></li>
+      <li><a href="${ARC_LINKS.explorer}" target="_blank">Explorer</a></li>
+      <li><a href="${ARC_LINKS.twitter}" target="_blank">Twitter / X</a></li>
+      <li><a href="${ARC_LINKS.discord}" target="_blank">Discord</a></li>
+      <li><a href="${ARC_LINKS.telegram}" target="_blank">Telegram</a></li>
+    </ul>
+    <p>⚠️ Please replace these placeholder links in <code>script.js</code> with the real ARC official links.</p>
+  `;
 }
 
 function getBotReply(message) {
   const msg = message.toLowerCase();
 
-  // Greetings
+  // Greeting
   if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
-    return "Hello 👋 Welcome to ARC Chatbot. Ask me about ARC blockchain, official links, wallets, bridge, staking, farming, swaps, or how to interact.";
+    return {
+      html: `
+        <p>Hello 👋 Welcome to <strong>ARC Assistant</strong>.</p>
+        <p>I can help you with:</p>
+        <ul>
+          <li>What ARC blockchain is all about</li>
+          <li>Official links</li>
+          <li>How to start on ARC</li>
+          <li>How to bridge, swap, stake, and farm</li>
+          <li>Wallet setup and safety tips</li>
+        </ul>
+      `
+    };
   }
 
   // What is ARC
@@ -31,16 +94,37 @@ function getBotReply(message) {
     msg.includes("arc blockchain") ||
     msg.includes("tell me about arc")
   ) {
-    return "ARC is a blockchain ecosystem where users can explore dApps, bridge assets, swap tokens, stake, farm, and participate in on-chain activities. It is designed to help users interact with decentralized apps, move funds, and grow within the ecosystem. You should replace this with the exact official ARC description from their docs for the most accurate answer.";
+    return {
+      html: `
+        <p><strong>What is ARC?</strong></p>
+        <p>ARC is a blockchain ecosystem where users can explore decentralized applications (dApps), move assets through bridging, swap tokens, provide liquidity, stake, farm, and participate in on-chain activities.</p>
+        <p>Think of ARC as a place where users interact with different blockchain tools and platforms inside one ecosystem.</p>
+        <p>⚠️ For best accuracy, replace this with the exact official ARC description from ARC docs.</p>
+      `
+    };
   }
 
-  // What can I do on ARC
+  // What can I do
   if (
     msg.includes("what can i do on arc") ||
     msg.includes("use cases") ||
     msg.includes("what can i do")
   ) {
-    return "On ARC, you can usually bridge assets, swap tokens, provide liquidity, farm, stake, mint or trade NFTs (if supported), interact with ecosystem dApps, join quests/campaigns, and explore community tools. Update this answer with the exact ARC ecosystem features.";
+    return {
+      html: `
+        <p><strong>What can you do on ARC?</strong></p>
+        <ul>
+          <li>Bridge assets to ARC</li>
+          <li>Swap tokens on a DEX</li>
+          <li>Provide liquidity</li>
+          <li>Farm for rewards</li>
+          <li>Stake supported tokens</li>
+          <li>Join campaigns or quests</li>
+          <li>Explore partner dApps</li>
+          <li>Use the block explorer to track transactions</li>
+        </ul>
+      `
+    };
   }
 
   // Platforms / dApps
@@ -51,7 +135,22 @@ function getBotReply(message) {
     msg.includes("where can i interact") ||
     msg.includes("what platforms")
   ) {
-    return "Some common platforms to interact with on ARC may include: the official bridge, DEX (swap platform), staking platform, farming/liquidity platform, NFT marketplace (if available), official quest/campaign page, explorer, and ecosystem partner dApps. Replace this with the real ARC platform names and links.";
+    return {
+      html: `
+        <p><strong>Platforms to interact with on ARC</strong></p>
+        <ol>
+          <li>Official Bridge</li>
+          <li>Official DEX / Swap platform</li>
+          <li>Staking platform</li>
+          <li>Liquidity / Farming platform</li>
+          <li>Block Explorer</li>
+          <li>NFT marketplace (if supported)</li>
+          <li>Quest / campaign page (if available)</li>
+          <li>Partner ecosystem dApps</li>
+        </ol>
+        <p>⚠️ Replace these with the real ARC platform names from the official docs or website.</p>
+      `
+    };
   }
 
   // Official links
@@ -62,27 +161,37 @@ function getBotReply(message) {
     msg.includes("website") ||
     msg.includes("official")
   ) {
-    return "Official ARC links (edit these with the real ones): Website: https://your-arc-website.com | Docs: https://docs.your-arc-website.com | Bridge: https://bridge.your-arc-website.com | Staking: https://stake.your-arc-website.com | Explorer: https://explorer.your-arc-website.com | Twitter/X: https://x.com/yourarc | Discord: https://discord.gg/yourarc";
+    return {
+      html: getOfficialLinksHTML()
+    };
   }
 
-  // How to interact
+  // How to start / interact
   if (
-    msg.includes("how to interact") ||
-    msg.includes("steps to interact") ||
-    msg.includes("how do i interact") ||
-    msg.includes("how can i interact")
-  ) {
-    return "Steps to interact on ARC: 1) Install a supported wallet like MetaMask. 2) Add the ARC network (if needed). 3) Fund your wallet with supported tokens. 4) Visit the official ARC website. 5) Use the official bridge to move assets to ARC. 6) Swap tokens on the DEX. 7) Provide liquidity if you want. 8) Stake or farm on supported platforms. 9) Explore quests, campaigns, NFTs, or partner dApps. 10) Always use official links only.";
-  }
-
-  // Beginner guide
-  if (
-    msg.includes("beginner guide") ||
+    msg.includes("how do i start") ||
+    msg.includes("how to start") ||
     msg.includes("new to arc") ||
-    msg.includes("i am new") ||
-    msg.includes("how do i start")
+    msg.includes("beginner guide") ||
+    msg.includes("how to interact") ||
+    msg.includes("steps to interact")
   ) {
-    return "Beginner guide for ARC: Start by setting up a wallet, connect only to official ARC platforms, bridge a small amount first, test a token swap, learn gas fees, check the explorer for transactions, and avoid clicking random links from strangers. Always verify links from the official website, docs, X/Twitter, or Discord.";
+    return {
+      html: `
+        <p><strong>How to start on ARC (Beginner Steps)</strong></p>
+        <ol>
+          <li>Install a supported wallet (usually MetaMask or another compatible wallet).</li>
+          <li>Add the ARC network if needed (RPC, Chain ID, etc.).</li>
+          <li>Fund your wallet with supported tokens.</li>
+          <li>Visit the official ARC website.</li>
+          <li>Use the official bridge to move assets to ARC.</li>
+          <li>Try a small swap on the official DEX.</li>
+          <li>Explore staking or farming if available.</li>
+          <li>Check your transactions on the ARC explorer.</li>
+          <li>Join official community channels for updates.</li>
+          <li>Always start with small amounts and use official links only.</li>
+        </ol>
+      `
+    };
   }
 
   // Wallet
@@ -91,17 +200,21 @@ function getBotReply(message) {
     msg.includes("which wallet") ||
     msg.includes("supported wallet")
   ) {
-    return "To use ARC, you usually need a compatible wallet such as MetaMask or another supported EVM wallet (if ARC is EVM-compatible). Check the official ARC docs to confirm the exact supported wallets and network setup.";
-  }
-
-  // Add network
-  if (
-    msg.includes("add network") ||
-    msg.includes("arc rpc") ||
-    msg.includes("network details") ||
-    msg.includes("rpc")
-  ) {
-    return "To add ARC network, you normally need: Network Name, RPC URL, Chain ID, Currency Symbol, and Block Explorer URL. Please update this section with the exact ARC official RPC details from the docs.";
+    return {
+      html: `
+        <p><strong>Wallet Setup for ARC</strong></p>
+        <p>ARC usually requires a compatible wallet such as <strong>MetaMask</strong> or another supported wallet (especially if ARC is EVM-compatible).</p>
+        <p>You may need:</p>
+        <ul>
+          <li>Network Name</li>
+          <li>RPC URL</li>
+          <li>Chain ID</li>
+          <li>Currency Symbol</li>
+          <li>Block Explorer URL</li>
+        </ul>
+        <p>⚠️ Get the exact network details from the official ARC docs.</p>
+      `
+    };
   }
 
   // Bridge
@@ -110,7 +223,22 @@ function getBotReply(message) {
     msg.includes("how to bridge") ||
     msg.includes("bridge assets")
   ) {
-    return "How to bridge to ARC: 1) Visit the official bridge. 2) Connect your wallet. 3) Select source network. 4) Select ARC as destination network. 5) Choose token and amount. 6) Approve token if needed. 7) Confirm bridge transaction. 8) Wait for confirmation. 9) Check your balance on ARC after completion.";
+    return {
+      html: `
+        <p><strong>How to bridge to ARC</strong></p>
+        <ol>
+          <li>Open the <a href="${ARC_LINKS.bridge}" target="_blank">official ARC Bridge</a>.</li>
+          <li>Connect your wallet.</li>
+          <li>Select the source network.</li>
+          <li>Select ARC as the destination network.</li>
+          <li>Choose token and amount.</li>
+          <li>Approve the token if needed.</li>
+          <li>Confirm the bridge transaction.</li>
+          <li>Wait for confirmation.</li>
+          <li>Check your wallet balance on ARC after it completes.</li>
+        </ol>
+      `
+    };
   }
 
   // Swap
@@ -119,7 +247,22 @@ function getBotReply(message) {
     msg.includes("dex") ||
     msg.includes("trade token")
   ) {
-    return "How to swap on ARC: 1) Open the official ARC DEX. 2) Connect wallet. 3) Select token you want to swap from. 4) Select token you want to receive. 5) Enter amount. 6) Approve token if needed. 7) Review slippage and fees. 8) Confirm swap. 9) Wait for the transaction to complete.";
+    return {
+      html: `
+        <p><strong>How to swap on ARC</strong></p>
+        <ol>
+          <li>Open the official ARC DEX / swap platform.</li>
+          <li>Connect your wallet.</li>
+          <li>Select the token you want to swap from.</li>
+          <li>Select the token you want to receive.</li>
+          <li>Enter the amount.</li>
+          <li>Approve token if needed.</li>
+          <li>Review price impact, slippage, and fees.</li>
+          <li>Confirm the swap.</li>
+          <li>Wait for the transaction to complete.</li>
+        </ol>
+      `
+    };
   }
 
   // Staking
@@ -127,7 +270,22 @@ function getBotReply(message) {
     msg.includes("stake") ||
     msg.includes("staking")
   ) {
-    return "How to stake on ARC: 1) Visit the official staking platform. 2) Connect wallet. 3) Choose the token to stake. 4) Enter amount. 5) Approve token if needed. 6) Confirm staking transaction. 7) Monitor rewards. 8) Claim rewards when available. 9) Check lock periods or unstaking rules before staking.";
+    return {
+      html: `
+        <p><strong>How to stake on ARC</strong></p>
+        <ol>
+          <li>Open the <a href="${ARC_LINKS.staking}" target="_blank">official staking platform</a>.</li>
+          <li>Connect your wallet.</li>
+          <li>Select the token to stake.</li>
+          <li>Enter the amount.</li>
+          <li>Approve the token if required.</li>
+          <li>Confirm the staking transaction.</li>
+          <li>Monitor rewards.</li>
+          <li>Claim rewards when available.</li>
+          <li>Check lock periods or unstaking rules before staking.</li>
+        </ol>
+      `
+    };
   }
 
   // Farming / LP
@@ -137,15 +295,21 @@ function getBotReply(message) {
     msg.includes("liquidity") ||
     msg.includes("lp")
   ) {
-    return "How to farm on ARC: 1) Go to the official farming or liquidity platform. 2) Connect wallet. 3) Choose a liquidity pair. 4) Supply both tokens to create LP tokens. 5) Approve the tokens if needed. 6) Deposit LP tokens into the farm. 7) Start earning rewards. 8) Understand impermanent loss before providing liquidity.";
-  }
-
-  // NFT
-  if (
-    msg.includes("nft") ||
-    msg.includes("marketplace")
-  ) {
-    return "If ARC supports NFTs, you can usually mint, buy, sell, or list NFTs on its official marketplace or partner platforms. Always verify the official marketplace link from ARC docs or official social pages.";
+    return {
+      html: `
+        <p><strong>How to farm on ARC</strong></p>
+        <ol>
+          <li>Open the official farming or liquidity platform.</li>
+          <li>Connect your wallet.</li>
+          <li>Choose a liquidity pair.</li>
+          <li>Supply both tokens to create LP tokens.</li>
+          <li>Approve tokens if needed.</li>
+          <li>Deposit LP tokens into the farm.</li>
+          <li>Start earning rewards.</li>
+          <li>Understand impermanent loss before providing liquidity.</li>
+        </ol>
+      `
+    };
   }
 
   // Explorer
@@ -154,25 +318,42 @@ function getBotReply(message) {
     msg.includes("check transaction") ||
     msg.includes("tx hash")
   ) {
-    return "You can use the ARC block explorer to check wallet activity, token transfers, smart contracts, and transaction status. Update the official explorer link in the official links section for the real ARC explorer.";
+    return {
+      html: `
+        <p><strong>ARC Explorer</strong></p>
+        <p>You can use the <a href="${ARC_LINKS.explorer}" target="_blank">ARC Explorer</a> to:</p>
+        <ul>
+          <li>Check transaction status</li>
+          <li>View wallet activity</li>
+          <li>Track token transfers</li>
+          <li>Inspect smart contracts</li>
+          <li>Search transaction hashes (TX hash)</li>
+        </ul>
+      `
+    };
   }
 
   // Safety
   if (
     msg.includes("safe") ||
     msg.includes("security") ||
-    msg.includes("avoid scam")
+    msg.includes("avoid scam") ||
+    msg.includes("scam")
   ) {
-    return "Safety tips: Always use official ARC links only, double-check the website URL, never share your seed phrase, test with small funds first, beware of fake Telegram/Discord admins, and avoid random links sent in DMs.";
-  }
-
-  // Gas fees
-  if (
-    msg.includes("gas") ||
-    msg.includes("fees") ||
-    msg.includes("transaction fee")
-  ) {
-    return "Every blockchain transaction on ARC may require gas fees. Keep some native token in your wallet for transactions like bridging, swapping, staking, or farming. Check the docs for the exact gas token used on ARC.";
+    return {
+      html: `
+        <p><strong>Safety Tips for ARC</strong></p>
+        <ul>
+          <li>Only use official ARC links</li>
+          <li>Double-check website URLs before connecting wallet</li>
+          <li>Never share your seed phrase or private key</li>
+          <li>Start with small amounts first</li>
+          <li>Ignore random DMs claiming to be support</li>
+          <li>Beware of fake Telegram/Discord admins</li>
+          <li>Verify announcements from official channels only</li>
+        </ul>
+      `
+    };
   }
 
   // Community
@@ -183,25 +364,56 @@ function getBotReply(message) {
     msg.includes("x account") ||
     msg.includes("telegram")
   ) {
-    return "To stay updated, follow ARC's official community channels like Website, Docs, X/Twitter, Discord, and Telegram (if available). Replace the official links section with the real verified links.";
+    return {
+      html: `
+        <p><strong>ARC Community</strong></p>
+        <p>Stay updated using the official channels:</p>
+        <ul>
+          <li><a href="${ARC_LINKS.twitter}" target="_blank">Twitter / X</a></li>
+          <li><a href="${ARC_LINKS.discord}" target="_blank">Discord</a></li>
+          <li><a href="${ARC_LINKS.telegram}" target="_blank">Telegram</a></li>
+          <li><a href="${ARC_LINKS.docs}" target="_blank">Docs</a></li>
+        </ul>
+      `
+    };
   }
 
-  // Default fallback
-  return "Sorry 😅 I don't understand that yet. Try asking: What is ARC? | Official links | How to interact | Platforms on ARC | How to bridge | How to stake | How to farm | Wallet setup";
+  // Fallback
+  return {
+    html: `
+      <p>Sorry 😅 I don't understand that yet.</p>
+      <p>Try asking:</p>
+      <ul>
+        <li>What is ARC?</li>
+        <li>Official links</li>
+        <li>How do I start on ARC?</li>
+        <li>How to bridge on ARC?</li>
+        <li>How to stake on ARC?</li>
+        <li>How to farm on ARC?</li>
+        <li>Which wallet should I use?</li>
+      </ul>
+    `
+  };
+}
+
+function processMessage(message) {
+  addMessage(message, "user");
+  userInput.value = "";
+
+  showTyping();
+
+  setTimeout(() => {
+    hideTyping();
+
+    const reply = getBotReply(message);
+    addMessage(reply.html, "bot", true);
+  }, 700);
 }
 
 function handleSend() {
   const message = userInput.value.trim();
-
   if (!message) return;
-
-  addMessage(message, "user");
-  userInput.value = "";
-
-  setTimeout(() => {
-    const reply = getBotReply(message);
-    addMessage(reply, "bot");
-  }, 500);
+  processMessage(message);
 }
 
 sendBtn.addEventListener("click", handleSend);
@@ -210,4 +422,11 @@ userInput.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     handleSend();
   }
+});
+
+quickButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const question = button.getAttribute("data-question");
+    processMessage(question);
+  });
 });
