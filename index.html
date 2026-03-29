@@ -3,22 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARC Chatbot</title>
+  <title>ARC Assistant</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
   <div class="app">
     <header class="header">
-      <h1>ARC Chatbot</h1>
-      <p>Your simple ARC assistant</p>
+      <div class="logo-wrap">
+        <div class="logo">A</div>
+        <div>
+          <h1>ARC Assistant</h1>
+          <p>Your beginner-friendly ARC blockchain guide</p>
+        </div>
+      </div>
+      <div class="status">
+        <span class="status-dot"></span>
+        Online
+      </div>
     </header>
 
-    <main class="chat-container">
+    <main class="chat-shell">
+      <div class="top-actions">
+        <button class="quick-btn" data-question="What is ARC?">What is ARC?</button>
+        <button class="quick-btn" data-question="Official links">Official Links</button>
+        <button class="quick-btn" data-question="How do I start on ARC?">How to Start</button>
+        <button class="quick-btn" data-question="How to bridge on ARC?">Bridge</button>
+        <button class="quick-btn" data-question="How to stake on ARC?">Stake</button>
+        <button class="quick-btn" data-question="How to farm on ARC?">Farm</button>
+      </div>
+
       <div id="chat-box" class="chat-box">
         <div class="message bot">
+          <div class="avatar bot-avatar">A</div>
           <div class="bubble">
-            Hello 👋 I am your ARC assistant. Ask me about ARC, bridge, staking, wallets, or official links.
+            <p>Welcome 👋 I’m your ARC Assistant.</p>
+            <p>You can ask me about:</p>
+            <ul>
+              <li>What ARC blockchain is about</li>
+              <li>Official links</li>
+              <li>How to bridge, swap, stake, or farm</li>
+              <li>Wallet setup</li>
+              <li>Beginner steps to interact safely</li>
+            </ul>
           </div>
+        </div>
+      </div>
+
+      <div id="typing-indicator" class="typing-indicator hidden">
+        <div class="avatar bot-avatar">A</div>
+        <div class="typing-bubble">
+          <span></span><span></span><span></span>
         </div>
       </div>
 
